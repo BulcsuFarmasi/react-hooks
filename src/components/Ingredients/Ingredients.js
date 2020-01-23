@@ -5,13 +5,20 @@ import IngredientList from "./IngredientList";
 import Search from "./Search";
 
 const Ingredients = () => {
-  const [ingredients, setIngridents] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
 
   const addIngredientHandler = ingredient => {
-    setIngridents(prevIngedients => [
+    setIngredients(prevIngedients => [
       ...prevIngedients,
-      { id: Math.random().toString, ...ingredient }
+      { id: Math.random().toString(), ...ingredient }
     ]);
+  };
+
+  const removeIngredientHandler = id => {
+    console.log(id);
+    setIngredients(prevIngedients =>
+      prevIngedients.filter(ingredient => ingredient.id !== id)
+    );
   };
 
   return (
@@ -20,7 +27,10 @@ const Ingredients = () => {
 
       <section>
         <Search />
-        <IngredientList ingredients={ingredients} onRemoveItem={() => {}} />
+        <IngredientList
+          ingredients={ingredients}
+          onRemoveItem={removeIngredientHandler}
+        />
       </section>
     </div>
   );
