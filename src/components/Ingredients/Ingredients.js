@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
@@ -6,22 +6,6 @@ import Search from "./Search";
 
 const Ingredients = () => {
   const [ingredients, setIngredients] = useState([]);
-
-  useEffect(() => {
-    fetch("https://react-hooks-570f3.firebaseio.com/ingredients.json")
-      .then(response => response.json())
-      .then(responseData => {
-        const loadedIngredients = [];
-        for (let key in responseData) {
-          loadedIngredients.push({
-            id: key,
-            title: responseData[key].title,
-            amount: responseData[key].amount
-          });
-        }
-        setIngredients(loadedIngredients);
-      });
-  }, []);
 
   useEffect(() => {
     console.log("RENDERING INGREDIENTS", ingredients);
@@ -51,9 +35,9 @@ const Ingredients = () => {
     );
   };
 
-  const filterIngredientsHandler = filteredIngredients => {
+  const filterIngredientsHandler = useCallback(filteredIngredients => {
     setIngredients(filteredIngredients);
-  };
+  }, []);
 
   return (
     <div className="App">
