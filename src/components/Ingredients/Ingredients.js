@@ -29,10 +29,13 @@ const Ingredients = () => {
   };
 
   const removeIngredientHandler = id => {
-    console.log(id);
-    setIngredients(prevIngedients =>
-      prevIngedients.filter(ingredient => ingredient.id !== id)
-    );
+    fetch(`https://react-hooks-570f3.firebaseio.com/ingredients/${id}.json`, {
+      method: "DELETE"
+    }).then(response => {
+      setIngredients(prevIngedients =>
+        prevIngedients.filter(ingredient => ingredient.id !== id)
+      );
+    });
   };
 
   const filterIngredientsHandler = useCallback(filteredIngredients => {
