@@ -8,6 +8,7 @@ import Search from "./Search";
 const Ingredients = () => {
   const [ingredients, setIngredients] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
   useEffect(() => {
     console.log("RENDERING INGREDIENTS", ingredients);
@@ -34,7 +35,7 @@ const Ingredients = () => {
 
   const removeIngredientHandler = id => {
     setIsLoading(true);
-    fetch(`https://react-hooks-570f3.firebaseio.com/ingredients/${id}.json`, {
+    fetch(`https://react-hooks-570f3.firebaseio.com/ingredients/${id}.jon`, {
       method: "DELETE"
     })
       .then(response => {
@@ -43,15 +44,23 @@ const Ingredients = () => {
           prevIngedients.filter(ingredient => ingredient.id !== id)
         );
       })
-      .catch(error => {});
+      .catch(error => {
+        setError("Something went wrong");
+        setIsLoading(false);
+      });
   };
 
   const filterIngredientsHandler = useCallback(filteredIngredients => {
     setIngredients(filteredIngredients);
   }, []);
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
     <div className="App">
+      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
       <IngredientForm
         onAddIngredient={addIngredientHandler}
         loading={isLoading}
