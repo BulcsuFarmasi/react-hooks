@@ -22,19 +22,40 @@ const ingredientsReducer = (currentIngredients, action) => {
 
 const Ingredients = () => {
   const [ingredients, dispatch] = useReducer(ingredientsReducer, []);
-  const { isLoading, error, data, sendRequest } = useHttp();
+  const {
+    isLoading,
+    error,
+    data,
+    sendRequest,
+    reqExtra,
+    reqIndentifier,
+  } = useHttp();
 
   // const [ingredients, setIngredients] = useState([]);
   // const [isLoading, setIsLoading] = useState(false);
   // const [error, setError] = useState();
 
   useEffect(() => {
-    console.log("RENDERING INGREDIENTS", ingredients);
-  }, [ingredients]);
+    if (!isLoading && !error && reqIndentifier === "REMOVE_INGREDIENT") {
+      dispatch({ type: "DELETE", id: reqExtra });
+    } else if (!isLoading && !error && reqIndentifier === "ADD_INGREDIENT") {
+      dispatch({
+        type: "ADD",
+        ingredient: { id: data.name, ...reqExtra },
+      });
+    }
+  }, [data, reqExtra, reqIndentifier, isLoading, error]);
 
   const addIngredientHandler = useCallback((ingredient) => {
+    sendRequest(
+      "https://react-hooks-570f3.firebaseio.com/ingredients.json",
+      "POST",
+      JSON.stringify(ingredient),
+      ingredient,
+      "ADD_INGREDIENT"
+    );
     // dispatchHttp({ type: "SEND" });
-    // fetch("https://react-hooks-570f3.firebaseio.com/ingredients.json", {
+    // fetch(, {
     //   method: "POST",
     //   body: JSON.stringify(ingredient),
     //   headers: { "Content-Type": "apllication/json" },
@@ -48,10 +69,7 @@ const Ingredients = () => {
     //     //   ...prevIngredients,
     //     //   { id: responseData.name, ...ingredient }
     //     // ]);
-    //     dispatch({
-    //       type: "ADD",
-    //       ingredient: { id: responseData.name, ...ingredient },
-    //     });
+    //
     //   });
   }, []);
 
@@ -59,7 +77,10 @@ const Ingredients = () => {
     (id) => {
       sendRequest(
         `https://react-hooks-570f3.firebaseio.com/ingredients/${id}.json`,
-        "DELETE"
+        "DELETE",
+        null,
+        id,
+        "REMOVE_INGREDIENT"
       );
     },
     [sendRequest]
